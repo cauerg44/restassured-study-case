@@ -164,4 +164,22 @@ public class ProductControllerRA {
 			.statusCode(422)
 			.body("errors.message[0]", equalTo("Descrição precisa ter no mínimo 10 caracteres"));
 	}
+	
+	@Test
+	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndPriceIsNegative() {
+		postProductInstance.put("price", -10.0);
+		JSONObject newProduct = new JSONObject(postProductInstance);
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.body(newProduct)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+		.when()
+			.post("/products")
+		.then()
+			.statusCode(422)
+			.body("errors.message[0]", equalTo("O preço deve ser positivo"));
+	}
 }
