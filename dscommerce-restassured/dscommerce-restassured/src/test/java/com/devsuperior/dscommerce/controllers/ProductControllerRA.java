@@ -166,8 +166,8 @@ public class ProductControllerRA {
 	}
 	
 	@Test
-	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndPriceIsNegative() {
-		postProductInstance.put("price", -10.0);
+	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndPriceIsZero() {
+		postProductInstance.put("price", 0.0);
 		JSONObject newProduct = new JSONObject(postProductInstance);
 		
 		given()
