@@ -216,4 +216,20 @@ public class ProductControllerRA {
 		.then()
 			.statusCode(403);
 	}
+	
+	@Test
+	public void insertShouldReturnUnauthorizedWhenInvalidToken() {
+		JSONObject newProduct = new JSONObject(postProductInstance);
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + invalidToken)
+			.body(newProduct)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+		.when()
+			.post("/products")
+		.then()
+			.statusCode(1);
+	}
 }
