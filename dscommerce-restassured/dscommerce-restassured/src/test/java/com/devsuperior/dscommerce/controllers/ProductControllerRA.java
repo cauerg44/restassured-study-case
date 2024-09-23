@@ -230,6 +230,18 @@ public class ProductControllerRA {
 		.when()
 			.post("/products")
 		.then()
-			.statusCode(1);
+			.statusCode(401);
+	}
+	
+	@Test
+	public void deleteShouldReturnNoContentWhenIdExistsAndLoggedAsAdmin() {
+		existingProductId = 25L;
+		
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", existingProductId)
+		.then()
+			.statusCode(204);
 	}
 }
