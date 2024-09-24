@@ -23,7 +23,7 @@ public class ProductControllerRA {
 
 	private String clientUsername, clientPassword, adminUsername, adminPassword;
 	private String clientToken, adminToken, invalidToken;
-	private Long existingProductId, nonExistingProductId;
+	private Long existingProductId, nonExistingProductId, dependentId;
 	private String productName;
 	
 	private Map<String, Object> postProductInstance;
@@ -235,7 +235,7 @@ public class ProductControllerRA {
 	
 	@Test
 	public void deleteShouldReturnNoContentWhenIdExistsAndLoggedAsAdmin() {
-		existingProductId = 25L;
+		existingProductId = 20L;
 		
 		given()
 			.header("Authorization", "Bearer " + adminToken)
@@ -243,5 +243,53 @@ public class ProductControllerRA {
 			.delete("/products/{id}", existingProductId)
 		.then()
 			.statusCode(204);
+	}
+	
+	@Test
+	public void deleteShouldReturnNotFoundWhenIdDoesNotExistsAndLoggedAsAdmin() {
+		nonExistingProductId = 100L;
+		
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", nonExistingProductId)
+		.then()
+			.statusCode(404);
+	}
+	
+	@Test
+	public void deleteShouldReturnBadRequestWhenDependentIdAndLoggedAsAdmin() {
+		dependentId = 3L;
+		
+		given()
+			.header("Authorization", "Bearer " + adminToken)
+		.when()
+			.delete("/products/{id}", dependentId)
+		.then()
+			.statusCode(400);
+	}
+	
+	@Test
+	public void deleteShouldReturnForbiddenWhenLoggedAsClient() {
+		existingProductId = 25L;
+		
+		given()
+			.header("Authorization", "Bearer " + clientToken)
+		.when()
+			.delete("/products/{id}", existingProductId)
+		.then()
+			.statusCode(403);
+	}
+	
+	@Test
+	public void deleteShouldReturnForbiddenWhenInvalidToken() {
+		existingProductId = 25L;
+		
+		given()
+			.header("Authorization", "Bearer " + invalidToken)
+		.when()
+			.delete("/products/{id}", existingProductId)
+		.then()
+			.statusCode(401);
 	}
 }
